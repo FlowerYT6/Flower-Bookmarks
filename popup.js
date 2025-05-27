@@ -1,7 +1,3 @@
-document.getElementById("fp").addEventListener("click", () => {
-  window.open('popup.html', '_blank');
-});
-
 document.addEventListener("DOMContentLoaded", function()  {
     const urlInput = document.getElementById("urlInput");
     const addBtn = document.getElementById("addBtn");
@@ -45,4 +41,8 @@ document.addEventListener("DOMContentLoaded", function()  {
     });
 
     loadUrls();
+});
+
+document.getElementById("fp").addEventListener("click", () => {
+  window.open('popup.html', '_blank');
 });
