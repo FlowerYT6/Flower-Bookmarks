@@ -16,7 +16,7 @@ function displayBookmarks(bookmarks) {
   bookmarks.forEach(url => {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = url;
+    a.href = url.startsWith("http") ? url : "https://" + url;
     a.textContent = url;
     a.target = "_blank";
     li.appendChild(a);
@@ -27,7 +27,6 @@ function displayBookmarks(bookmarks) {
 addBtn.addEventListener("click", () => {
   const url = input.value.trim();
   if (!url) return;
-
   const bookmarks = loadBookmarks();
   bookmarks.push(url);
   saveBookmarks(bookmarks);
@@ -35,8 +34,9 @@ addBtn.addEventListener("click", () => {
   input.value = "";
 });
 
-// Init
+// Initialize
 displayBookmarks(loadBookmarks());
+
 
 document.getElementById("fp").addEventListener("click", () => {
   window.open('popup.html', '_blank');
