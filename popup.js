@@ -1,47 +1,42 @@
-document.addEventListener("DOMContentLoaded", function()  {
-    const urlInput = document.getElementById("urlInput");
-    const addBtn = document.getElementById("addBtn");
-    const urlList = document.getElementById("urlList");
+const input = document.getElementById("urlInput");
+const list = document.getElementById("bookmarkList");
+const addBtn = document.getElementById("addBtn");
 
-    function loadUrls() {
-        chrome.storage.sync.get(["savedUrls"], function (data) {
-            urlList.innerHTML = "";
-            const urls = data.savedUrls || [];
+function loadBookmarks() {
+  const stored = localStorage.getItem("bookmarks");
+  return stored ? JSON.parse(stored) : [];
+}
 
-            urls.forEach((url, index) => {
-                const li = document.createElement("li");
-                li.textContent = url;
-                
-                // Delete Button
-                const deleteBtn = document.createElement("button");
-                deleteBtn.textContent = "Remove";
-                deleteBtn.addEventListener("click", function () {
-                    urls.splice(index, 1);
-                    chrome.storage.sync.set({ savedUrls: urls }, loadUrls);
-                });
+function saveBookmarks(bookmarks) {
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+}
 
-                li.appendChild(deleteBtn);
-                urlList.appendChild(li);
-            });
-        });
-    }
+function displayBookmarks(bookmarks) {
+  list.innerHTML = "";
+  bookmarks.forEach(url => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.textContent = url;
+    a.target = "_blank";
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+}
 
-    addBtn.addEventListener("click", function () {
-        const newUrl = urlInput.value.trim();
-        if (newUrl) {
-            chrome.storage.sync.get(["savedUrls"], function (data) {
-                const urls = data.savedUrls || [];
-                urls.push(newUrl);
-                chrome.storage.sync.set({ savedUrls: urls }, () => {
-                    urlInput.value = "";
-                    loadUrls();
-                });
-            });
-        }
-    });
+addBtn.addEventListener("click", () => {
+  const url = input.value.trim();
+  if (!url) return;
 
-    loadUrls();
+  const bookmarks = loadBookmarks();
+  bookmarks.push(url);
+  saveBookmarks(bookmarks);
+  displayBookmarks(bookmarks);
+  input.value = "";
 });
+
+// Init
+displayBookmarks(loadBookmarks());
 
 document.getElementById("fp").addEventListener("click", () => {
   window.open('popup.html', '_blank');
